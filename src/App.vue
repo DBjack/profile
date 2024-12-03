@@ -1,72 +1,60 @@
 <script setup>
-import Home from './components/Home.vue';
+import { onMounted } from "vue";
+import FloatingContact from "./components/FloatingContact.vue";
+import { applyTheme } from "./styles/themes";
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem("theme") || "minimal";
+  applyTheme(savedTheme);
+});
 </script>
 
 <template>
-  <Home msg="Vite + Vue" />
+  <router-view></router-view>
+  <FloatingContact />
 </template>
 
 <style>
+:root {
+  --theme-primary: #2196f3;
+  --theme-primaryRgb: 33, 150, 243;
+  --theme-secondary: #90caf9;
+  --theme-text: #333333;
+  --theme-textSecondary: #666666;
+  --theme-background: #ffffff;
+  --theme-backgroundGradient: linear-gradient(135deg, #ffffff, #f5f5f5);
+  --theme-border: #e0e0e0;
+  --theme-card: rgba(0, 0, 0, 0.02);
+  --theme-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --theme-hover: #2196f333;
+}
+
 body {
   margin: 0;
-  padding: 0;
+  font-family: "Inter", sans-serif;
+  color: var(--theme-text);
+  background: var(--theme-background);
+  background-image: var(--theme-backgroundGradient);
   min-height: 100vh;
-  color: white;
-  width: 100vw;
-  overflow-x: hidden;
+  transition: all 0.3s ease;
 }
 
 #app {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   position: relative;
+  min-height: 100vh;
 }
 
-/* 添加背景图层 */
-#app::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    linear-gradient(
-      to bottom,
-      rgba(10, 10, 15, 0.95),
-      rgba(10, 10, 15, 0.85)
-    ),
-    url('/src/assets/bg.jpg'); /* 替换为你的背景图路径 */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  z-index: -1;
-  /* 添加视差效果 */
-  transform: scale(1.1);
-  animation: slowZoom 20s infinite alternate ease-in-out;
+/* Ant Design Vue 暗色菜单样式覆盖 */
+.ant-dropdown .ant-dropdown-menu {
+  background: var(--theme-background);
+  border: 1px solid var(--theme-border);
 }
 
-/* 添加缓慢缩放动画 */
-@keyframes slowZoom {
-  from {
-    transform: scale(1.1);
-  }
-  to {
-    transform: scale(1.2);
-  }
+.ant-dropdown .ant-dropdown-menu-item {
+  color: var(--theme-text);
 }
 
-/* 添加页面过渡效果 */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+.ant-dropdown .ant-dropdown-menu-item:hover {
+  background: var(--theme-hover);
 }
 </style>
