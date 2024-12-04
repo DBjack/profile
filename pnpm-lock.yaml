@@ -798,6 +798,15 @@ packages:
     dev: true
     optional: true
 
+  /sass-embedded-android-arm@1.81.1:
+    resolution: {integrity: sha512-K/vLiaBWyJvFrHy5RC6np/hpwJp9ljdnMTcMN+tUhLUXA8CP3479rJxuuwY+sRsJ7WjwR1z/4R5zHLQYsnyosQ==}
+    engines: {node: '>=14.0.0'}
+    cpu: [arm]
+    os: [android]
+    requiresBuild: true
+    dev: true
+    optional: true
+
   /sass-embedded-android-ia32@1.81.1:
     resolution: {integrity: sha512-7iPzdob1FyMVo9iu/4iHymNz4DL6DMo9pn2P/Ix640Vc6unoaYaVvqCxtMNrG6nVOh/i3EuWtyozELd4foyrkg==}
     engines: {node: '>=14.0.0'}
@@ -974,6 +983,7 @@ packages:
       sync-child-process: 1.0.2
       varint: 6.0.0
     optionalDependencies:
+      sass-embedded-android-arm: 1.81.1
       sass-embedded-android-arm64: 1.81.1
       sass-embedded-android-ia32: 1.81.1
       sass-embedded-android-riscv64: 1.81.1

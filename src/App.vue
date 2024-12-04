@@ -1,60 +1,61 @@
 <script setup>
-import { onMounted } from "vue";
-import FloatingContact from "./components/FloatingContact.vue";
-import { applyTheme } from "./styles/themes";
+import { ref } from "vue";
+import Header from "./components/Header.vue";
+import Contact from "./components/Contact.vue";
+import { navLinksData } from "./data/home";
 
-onMounted(() => {
-  const savedTheme = localStorage.getItem("theme") || "minimal";
-  applyTheme(savedTheme);
-});
+const navLinks = ref(navLinksData);
 </script>
 
 <template>
-  <router-view></router-view>
-  <FloatingContact />
+  <div class="app">
+    <Header :navLinks="navLinks" />
+    <router-view></router-view>
+    <Contact />
+  </div>
 </template>
 
-<style>
+<style lang="scss">
+.app {
+  min-height: 100vh;
+  background: var(--theme-background);
+}
+
+/* 全局样式 */
 :root {
-  --theme-primary: #2196f3;
-  --theme-primaryRgb: 33, 150, 243;
-  --theme-secondary: #90caf9;
-  --theme-text: #333333;
-  --theme-textSecondary: #666666;
   --theme-background: #ffffff;
-  --theme-backgroundGradient: linear-gradient(135deg, #ffffff, #f5f5f5);
-  --theme-border: #e0e0e0;
-  --theme-card: rgba(0, 0, 0, 0.02);
-  --theme-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  --theme-hover: #2196f333;
+  --theme-text: #2c3e50;
+  --theme-textSecondary: #666666;
+  --theme-primary: #3498db;
+  --theme-hover: #f5f5f5;
+  --theme-card: #ffffff;
+  --theme-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 暗色主题 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --theme-background: #1a1a1a;
+    --theme-text: #ffffff;
+    --theme-textSecondary: #999999;
+    --theme-primary: #3498db;
+    --theme-hover: #2c2c2c;
+    --theme-card: #2c2c2c;
+    --theme-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
 }
 
 body {
   margin: 0;
-  font-family: "Inter", sans-serif;
-  color: var(--theme-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background: var(--theme-background);
-  background-image: var(--theme-backgroundGradient);
-  min-height: 100vh;
-  transition: all 0.3s ease;
-}
-
-#app {
-  position: relative;
-  min-height: 100vh;
-}
-
-/* Ant Design Vue 暗色菜单样式覆盖 */
-.ant-dropdown .ant-dropdown-menu {
-  background: var(--theme-background);
-  border: 1px solid var(--theme-border);
-}
-
-.ant-dropdown .ant-dropdown-menu-item {
   color: var(--theme-text);
 }
 
-.ant-dropdown .ant-dropdown-menu-item:hover {
-  background: var(--theme-hover);
+* {
+  box-sizing: border-box;
 }
 </style>
