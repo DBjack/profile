@@ -16,6 +16,9 @@ const profile = ref(profileData);
 const skills = ref(skillsData);
 const projects = ref(projectsData);
 
+const isScrolling = ref(false);
+let scrollTimer = null;
+
 const options = {
   licenseKey: "OPEN-SOURCE-GPLV3-LICENSE",
   scrollingSpeed: 1000,
@@ -24,13 +27,18 @@ const options = {
   navigationTooltips: ["首页", "技能", "项目"],
   showActiveTooltip: false,
   anchors: ["home", "skills", "projects"],
-  onHover: function (direction) {
-    // 可以在这里添加自定义悬浮效果
+  onLeave: (origin, destination, direction) => {
+    // 开始滚动时触发动画
+    isScrolling.value = true;
+
+    // 清除之前的定时器
+    if (scrollTimer) clearTimeout(scrollTimer);
+
+    // 滚动结束后1.5秒停止动画
+    scrollTimer = setTimeout(() => {
+      isScrolling.value = false;
+    }, 1500);
   },
-  css3: true,
-  scrollBar: false,
-  verticalCentered: true,
-  responsiveWidth: 768,
 };
 
 onMounted(() => {
@@ -45,7 +53,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="home">
+  <div class="home" :class="{ 'is-scrolling': isScrolling }">
     <Header :navLinks="navLinks" />
 
     <full-page ref="fullpage" :options="options">
@@ -137,6 +145,101 @@ onMounted(() => {
 .home {
   height: 100vh;
   overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    background: radial-gradient(
+        circle at 0% 0%,
+        rgba(52, 152, 219, 0.15) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 100% 0%,
+        rgba(155, 89, 182, 0.15) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 100% 100%,
+        rgba(46, 204, 113, 0.15) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 0% 100%,
+        rgba(241, 196, 15, 0.15) 0%,
+        transparent 50%
+      );
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.8;
+    transform: translate(0, 0) rotate(0deg);
+    transition: transform 0.3s ease-out;
+  }
+
+  &::after {
+    content: "";
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 25%,
+      transparent 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+    transform: translate(0, 0) scale(1);
+    transition: transform 0.3s ease-out;
+  }
+
+  &.is-scrolling {
+    &::before {
+      transform: translate(5%, 5%) rotate(1deg);
+      transition: transform 1s ease-out;
+    }
+
+    &::after {
+      transform: translate(-3%, -3%) scale(1.05);
+      transition: transform 1s ease-out;
+    }
+  }
+}
+
+/* 暗色模式下的背景 */
+:root[class="dark"] .home::before {
+  background: radial-gradient(
+      circle at 0% 0%,
+      rgba(52, 152, 219, 0.2) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(155, 89, 182, 0.2) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      rgba(46, 204, 113, 0.2) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 0% 100%,
+      rgba(241, 196, 15, 0.2) 0%,
+      transparent 50%
+    );
+}
+
+:deep(.section) {
+  position: relative;
+  z-index: 1;
 }
 
 .section {
