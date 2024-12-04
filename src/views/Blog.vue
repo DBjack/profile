@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from "vue";
 import Header from "../components/Header.vue";
-import { Card, Tag, Pagination } from "ant-design-vue";
 
 const navLinks = ref([
   { name: "首页", path: "/" },
@@ -10,65 +9,62 @@ const navLinks = ref([
   { name: "博客", path: "/blog" },
 ]);
 
-const blogPosts = ref([
+// 左侧目录
+const categories = ref([
   {
-    id: 1,
-    title: "深入理解 Vue3 Composition API",
-    date: "2024-03-15",
-    summary: "本文详细介绍了 Vue3 Composition API 的使用方法和最佳实践...",
-    tags: ["Vue3", "JavaScript", "前端开发"],
-    coverImage:
-      "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=500",
-    readTime: "5 min",
+    title: "开篇词",
+    path: "/blog#intro",
   },
   {
-    id: 2,
-    title: "TypeScript 高级特性详解",
-    date: "2024-03-10",
-    summary: "探索 TypeScript 的高级类型系统，包括泛型、映射类型和条件类型...",
-    tags: ["TypeScript", "前端开发"],
-    coverImage:
-      "https://images.unsplash.com/photo-1516116216624-53e697fedbea?w=500",
-    readTime: "8 min",
+    title: "极简部署",
+    children: [
+      { title: "一: 手写最简静态资源服务器", path: "/blog#static-server" },
+      { title: "二: 基于docker部署极简版", path: "/blog#docker-deploy" },
+      { title: "三: 基于nginx镜像部署及学习", path: "/blog#nginx-deploy" },
+    ],
   },
   {
-    id: 3,
-    title: "现代 CSS 布局技巧",
-    date: "2024-03-05",
-    summary: "介绍 Grid 和 Flexbox 的高级用法，以及响应式设计的最佳实践...",
-    tags: ["CSS", "响应式设计"],
-    coverImage:
-      "https://images.unsplash.com/photo-1507721999472-8ed4421c4af2?w=500",
-    readTime: "6 min",
+    title: "单页部署",
+    children: [
+      {
+        title: "四: docker镜像优化及多阶段构建",
+        path: "/blog#docker-optimize",
+      },
+      { title: "五: nginx 配置及长期缓存优化", path: "/blog#nginx-cache" },
+    ],
   },
   {
-    id: 4,
-    title: "React vs Vue：深度对比",
-    date: "2024-02-28",
-    summary: "对比两大前端框架的优缺点，帮助开发者做出选择...",
-    tags: ["React", "Vue", "框架对比"],
-    coverImage:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=500",
-    readTime: "10 min",
+    title: "对象存储",
+    children: [
+      { title: "六: 将静态资源部署在OSS/CDN", path: "/blog#oss-cdn" },
+      {
+        title: "七: 静态资源上传时间与空间优化",
+        path: "/blog#static-optimize",
+      },
+    ],
   },
   {
-    id: 5,
-    title: "Web 性能优化实战指南",
-    date: "2024-02-20",
-    summary: "从实际项目出发，分享前端性能优化的经验和技巧...",
-    tags: ["性能优化", "前端开发"],
-    coverImage:
-      "https://images.unsplash.com/photo-1551033406-611cf9a28f67?w=500",
-    readTime: "7 min",
+    title: "服务编排",
+    children: [
+      { title: "八: 服务网关 traefik 搭建", path: "/blog#traefik" },
+      { title: "九: 前端应用域名配置", path: "/blog#domain-config" },
+    ],
   },
 ]);
 
-const currentPage = ref(1);
-const pageSize = ref(6);
+// 右侧导航
+const onThisPage = ref([
+  { title: "文字与视频内容", path: "#content" },
+  { title: "前置知识", path: "#prerequisites" },
+  { title: "你会学到什么", path: "#learning" },
+  { title: "适合人群", path: "#audience" },
+  { title: "作者简介", path: "#author" },
+]);
 
-const handlePageChange = (page) => {
-  currentPage.value = page;
-  window.scrollTo({ top: 0, behavior: "smooth" });
+const activeSection = ref("intro");
+
+const setActiveSection = (section) => {
+  activeSection.value = section;
 };
 </script>
 
@@ -76,241 +72,238 @@ const handlePageChange = (page) => {
   <div class="blog-container">
     <Header :navLinks="navLinks" />
 
-    <main class="blog-content">
-      <h1 class="blog-title">技术博客</h1>
-
-      <div class="blog-grid">
-        <a-card
-          v-for="post in blogPosts"
-          :key="post.id"
-          class="blog-card"
-          :bodyStyle="{ padding: '20px' }"
-        >
-          <template #cover>
-            <div class="card-image-container">
-              <img :src="post.coverImage" :alt="post.title" />
-              <div class="image-overlay">
-                <span class="read-time">
-                  <i class="far fa-clock"></i>
-                  {{ post.readTime }}
-                </span>
-              </div>
-            </div>
-          </template>
-
-          <div class="post-meta">
-            <span class="post-date">
-              <i class="far fa-calendar-alt"></i>
-              {{ post.date }}
-            </span>
-          </div>
-
-          <a-card-meta :title="post.title">
-            <template #description>
-              <p class="post-summary">{{ post.summary }}</p>
-              <div class="post-tags">
-                <a-tag
-                  v-for="tag in post.tags"
-                  :key="tag"
-                  color="var(--theme-primary)"
+    <div class="content-wrapper">
+      <!-- 左侧目录 -->
+      <aside class="sidebar left-sidebar">
+        <nav class="sidebar-nav">
+          <div
+            v-for="category in categories"
+            :key="category.title"
+            class="nav-group"
+          >
+            <h3 class="nav-group-title">{{ category.title }}</h3>
+            <ul v-if="category.children" class="nav-group-items">
+              <li
+                v-for="item in category.children"
+                :key="item.title"
+                class="nav-item"
+              >
+                <a
+                  :href="item.path"
+                  :class="{ active: activeSection === item.path.split('#')[1] }"
+                  @click="setActiveSection(item.path.split('#')[1])"
                 >
-                  {{ tag }}
-                </a-tag>
-              </div>
-            </template>
-          </a-card-meta>
-
-          <div class="card-footer">
-            <a href="#" class="read-more">
-              阅读全文
-              <i class="fas fa-arrow-right"></i>
+                  {{ item.title }}
+                </a>
+              </li>
+            </ul>
+            <a
+              v-else
+              :href="category.path"
+              :class="{ active: activeSection === category.path.split('#')[1] }"
+              @click="setActiveSection(category.path.split('#')[1])"
+              class="nav-item"
+            >
+              {{ category.title }}
             </a>
           </div>
-        </a-card>
-      </div>
+        </nav>
+      </aside>
 
-      <div class="pagination-container">
-        <a-pagination
-          v-model:current="currentPage"
-          :total="50"
-          :pageSize="pageSize"
-          @change="handlePageChange"
-        />
-      </div>
-    </main>
+      <!-- 主要内容区 -->
+      <main class="main-content">
+        <article class="article">
+          <h1>专栏介绍</h1>
+
+          <div class="content-block">
+            <blockquote>
+              为了更深入理解前端部署，我们将从最原始的部署方案过渡到 Docker 与
+              Kubernetes，逐步进行优化，并使用 CICD 完善工程质量及部署效率。
+            </blockquote>
+
+            <p>你们公司的前端是如何进行部署的？很多人对前端部署感觉到陌生。</p>
+
+            <p>
+              一方面，这些事情与业务无关，也很少有人注意到。另一方面，即使注意到，前端部署一般交给前端负责人或运维同学来负责，也很少有机会接触到相关事项。即使身在其中，前端部署复杂度较高，仅需点点点即可完成部署，很多人对其中原理也难以捕捉。
+            </p>
+
+            <p>
+              实际上我们对于前端的部署，就是对其静态资源的服务。本专栏通过使用
+              nodejs
+              写一个简单的静态服务器，来简单解释前端部署。接下来本专栏将引导你使用
+              Docker 部署，并优化镜像、优化
+              Pipeline，一步一步探索前端部署优化及发展，并以单页应用为例进行实践部署。
+            </p>
+
+            <!-- 暂时注释掉图片，直到有正确的图片资源 -->
+            <!-- <img src="@/assets/images/deployment-flow.png" alt="前端部署流程简介" class="flow-diagram"> -->
+          </div>
+        </article>
+      </main>
+
+      <!-- 右侧导航 -->
+      <aside class="sidebar right-sidebar">
+        <div class="on-this-page">
+          <h3>On This Page</h3>
+          <nav>
+            <ul>
+              <li v-for="item in onThisPage" :key="item.title" class="nav-item">
+                <a :href="item.path">{{ item.title }}</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
 .blog-container {
   min-height: 100vh;
-  padding: 80px 20px 40px;
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
-.blog-title {
-  font-size: 2.5rem;
-  text-align: center;
-  margin-bottom: 3rem;
-  color: var(--theme-text);
-  position: relative;
-
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: var(--theme-primary);
-    border-radius: 2px;
-  }
-}
-
-.blog-grid {
+.content-wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: 280px minmax(0, 1fr) 240px;
   gap: 2rem;
-  margin-bottom: 3rem;
+  max-width: 1440px;
+  margin: 80px auto 0;
+  padding: 0 2rem;
 }
 
-.blog-card {
-  background: var(--theme-card);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: none;
+.sidebar {
+  position: sticky;
+  top: 80px;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+  padding: 1rem 0;
 
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--theme-shadow);
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
 
-    .card-image-container img {
-      transform: scale(1.1);
-    }
+  &::-webkit-scrollbar-thumb {
+    background: var(--theme-border);
+    border-radius: 3px;
   }
 }
 
-.card-image-container {
-  position: relative;
-  overflow: hidden;
-  height: 200px;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
-  }
-
-  .image-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-      to bottom,
-      transparent 0%,
-      rgba(0, 0, 0, 0.7) 100%
-    );
-    display: flex;
-    align-items: flex-end;
-    padding: 1rem;
-
-    .read-time {
-      color: white;
-      font-size: 0.9rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-
-      i {
-        font-size: 1rem;
-      }
-    }
-  }
+.nav-group {
+  margin-bottom: 1.5rem;
 }
 
-.post-meta {
-  margin-bottom: 1rem;
-
-  .post-date {
-    color: var(--theme-textSecondary);
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-}
-
-:deep(.ant-card-meta-title) {
+.nav-group-title {
+  font-size: 0.875rem;
+  font-weight: 600;
   color: var(--theme-text);
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+  padding: 0.35rem 1rem;
 }
 
-.post-summary {
-  color: var(--theme-textSecondary);
-  margin-bottom: 1rem;
-  line-height: 1.6;
+.nav-group-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.post-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
+.nav-item {
+  font-size: 0.875rem;
 
-.card-footer {
-  margin-top: 1.5rem;
-  text-align: right;
-
-  .read-more {
-    color: var(--theme-primary);
+  a {
+    display: block;
+    padding: 0.35rem 1rem;
+    color: var(--theme-textSecondary);
     text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
     transition: all 0.3s ease;
+    border-left: 2px solid transparent;
 
     &:hover {
-      gap: 0.8rem;
-
-      i {
-        transform: translateX(3px);
-      }
+      color: var(--theme-primary);
+      background: var(--theme-hover);
     }
 
-    i {
-      font-size: 0.9rem;
-      transition: transform 0.3s ease;
+    &.active {
+      color: var(--theme-primary);
+      border-left-color: var(--theme-primary);
+      background: var(--theme-hover);
     }
   }
 }
 
-.pagination-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 3rem;
+.main-content {
+  padding: 1rem 2rem;
+  max-width: 100%;
+}
+
+.article {
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--theme-text);
+  }
+
+  blockquote {
+    margin: 1rem 0;
+    padding: 1rem;
+    border-left: 4px solid var(--theme-primary);
+    background: var(--theme-card);
+    color: var(--theme-textSecondary);
+  }
+
+  p {
+    line-height: 1.7;
+    margin: 1rem 0;
+    color: var(--theme-text);
+  }
+}
+
+.flow-diagram {
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem 0;
+  border-radius: 8px;
+}
+
+.on-this-page {
+  padding: 0 1rem;
+
+  h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--theme-text);
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+@media (max-width: 1280px) {
+  .content-wrapper {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+
+  .right-sidebar {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
-  .blog-container {
-    padding: 80px 10px 20px;
-  }
-
-  .blog-title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
-
-  .blog-grid {
+  .content-wrapper {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .left-sidebar {
+    display: none;
+  }
+
+  .main-content {
+    padding: 1rem;
   }
 }
 </style>
