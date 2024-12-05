@@ -2,42 +2,37 @@ name: Deploy
 
 on:
   push:
-    branches: [main] # 当 main 分支有推送时触发
+    branches: [main] # 或者你的主分支名
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: "18"
 
-      - name: Install pnpm
+      - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: pnpm install
 
       - name: Build
         run: pnpm run build
 
       - name: Deploy to Server
-        uses: appleboy/ssh-action@master
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd /var/www/profile
-            git pull
-            pnpm install
-            pnpm run build
-            cp -r dist/* /var/www/profile/dist/
-            chown -R nginx:nginx /var/www/profile/dist
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          source: "dist/*"
+          target: "/var/www/profile/dist"
+          strip_components: 1
