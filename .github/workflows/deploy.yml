@@ -36,3 +36,4 @@ jobs:
           source: "dist/*"
           target: "/var/www/profile/dist"
           strip_components: 1
+          debug: true
