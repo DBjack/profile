@@ -146,6 +146,14 @@ onMounted(() => {
   height: 100vh;
   overflow: hidden;
   position: relative;
+  background: linear-gradient(
+    135deg,
+    #f6f9fc 0%,
+    #f4f8fc 25%,
+    #edf3fa 50%,
+    #e9f1fc 75%,
+    #e6f0fd 100%
+  );
 
   &::before {
     content: "";
@@ -156,27 +164,26 @@ onMounted(() => {
     bottom: -50%;
     background: radial-gradient(
         circle at 0% 0%,
-        rgba(52, 152, 219, 0.15) 0%,
+        rgba(74, 144, 226, 0.08) 0%,
         transparent 50%
       ),
       radial-gradient(
         circle at 100% 0%,
-        rgba(155, 89, 182, 0.15) 0%,
+        rgba(130, 96, 229, 0.08) 0%,
         transparent 50%
       ),
       radial-gradient(
         circle at 100% 100%,
-        rgba(46, 204, 113, 0.15) 0%,
+        rgba(91, 195, 235, 0.08) 0%,
         transparent 50%
       ),
       radial-gradient(
         circle at 0% 100%,
-        rgba(241, 196, 15, 0.15) 0%,
+        rgba(198, 182, 255, 0.08) 0%,
         transparent 50%
       );
     pointer-events: none;
     z-index: 0;
-    opacity: 0.8;
     transform: translate(0, 0) rotate(0deg);
     transition: transform 0.3s ease-out;
   }
@@ -190,8 +197,8 @@ onMounted(() => {
     bottom: -50%;
     background: linear-gradient(
       135deg,
-      rgba(255, 255, 255, 0.1) 0%,
-      rgba(255, 255, 255, 0.05) 25%,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.08) 25%,
       transparent 100%
     );
     pointer-events: none;
@@ -202,39 +209,74 @@ onMounted(() => {
 
   &.is-scrolling {
     &::before {
-      transform: translate(5%, 5%) rotate(1deg);
+      transform: translate(3%, 3%) rotate(0.5deg);
       transition: transform 1s ease-out;
     }
 
     &::after {
-      transform: translate(-3%, -3%) scale(1.05);
+      transform: translate(-2%, -2%) scale(1.03);
       transition: transform 1s ease-out;
     }
   }
 }
 
-/* 暗色模式下的背景 */
-:root[class="dark"] .home::before {
-  background: radial-gradient(
-      circle at 0% 0%,
-      rgba(52, 152, 219, 0.2) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 100% 0%,
-      rgba(155, 89, 182, 0.2) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 100% 100%,
-      rgba(46, 204, 113, 0.2) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      circle at 0% 100%,
-      rgba(241, 196, 15, 0.2) 0%,
-      transparent 50%
-    );
+/* 更新文字颜色和样式 */
+.hero-content {
+  h1 {
+    color: #32325d;
+    font-size: 3.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+  }
+
+  p {
+    color: #525f7f;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+}
+
+/* 更新卡片样式 */
+.skill-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border-color: rgba(103, 114, 229, 0.2);
+  }
+}
+
+/* 更新进度条样式 */
+.skill-bar {
+  .skill-progress {
+    background: linear-gradient(90deg, #6772e5 0%, #9b82f3 50%, #b76ac4 100%);
+  }
+}
+
+/* 暗色模式调整 */
+:root[class="dark"] .home {
+  background: linear-gradient(135deg, #1a1f36 0%, #1f2642 50%, #242d4d 100%);
+
+  .hero-content {
+    h1 {
+      color: #fff;
+    }
+
+    p {
+      color: #a5b1c9;
+    }
+  }
+
+  .skill-card {
+    background: rgba(26, 31, 54, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 :deep(.section) {
