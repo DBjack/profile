@@ -305,7 +305,7 @@ const closeProjectDetails = () => {
 
     &.primary {
       background: var(--theme-primary);
-      color: white;
+      color: rgb(247, 244, 244);
 
       &:hover {
         transform: translateY(-2px);
